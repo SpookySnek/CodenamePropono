@@ -1,0 +1,6 @@
+@CodenamePropono.Server_HostAddress = http://localhost:5159
+
+GET {{CodenamePropono.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
