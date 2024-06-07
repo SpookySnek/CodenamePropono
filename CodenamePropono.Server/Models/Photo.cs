@@ -1,3 +1,5 @@
+using Microsoft.Build.Framework;
+
 namespace CodenamePropono.Server.Models;
 
 public class Photo

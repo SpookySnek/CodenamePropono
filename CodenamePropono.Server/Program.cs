@@ -1,4 +1,3 @@
-using System.Configuration;
 using CodenamePropono.Server.Data;
 using Microsoft.EntityFrameworkCore;
 

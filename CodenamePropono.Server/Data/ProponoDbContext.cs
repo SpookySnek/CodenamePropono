@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using CodenamePropono.Server.Models;
+﻿using CodenamePropono.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;

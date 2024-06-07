@@ -4,8 +4,6 @@ public class Collection
 {
     public int Id { get; set; }
     
-    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
-    
     public DateTime CreationDate { get; set; }
     
     public DateTime? UpdateDate { get; set; }
@@ -16,5 +14,7 @@ public class Collection
     
     public int UserId { get; set; }
     
-    public User User { get; set; } = null!;
+    public User User { get; set; }
+    
+    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 }
