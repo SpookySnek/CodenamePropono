@@ -5,6 +5,8 @@ namespace CodenamePropono.Server.Models;
 public class Photo
 {
     public int Id { get; set; }
+    
+    public required string PhotoUrl { get; set; }
 
     public DateTime UploadDate { get; set; }
     
