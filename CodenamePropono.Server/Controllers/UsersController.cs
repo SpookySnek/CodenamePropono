@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CodenamePropono.Server.Data;
+using CodenamePropono.Server.DTOs.Outgoing;
 using CodenamePropono.Server.Models;
+using MapsterMapper;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace CodenamePropono.Server.Controllers
 {
@@ -14,18 +17,22 @@ namespace CodenamePropono.Server.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly ProponoDbContext _context;
 
-        public UsersController(ProponoDbContext context)
+        public UsersController(IMapper mapper, ProponoDbContext context)
         {
+            _mapper = mapper;
             _context = context;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserGetDTO>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            var mappedUsers = _mapper.Map<List<UserGetDTO>>(users);
+            return mappedUsers;
         }
 
         // GET: api/Users/5
