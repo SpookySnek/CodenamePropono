@@ -18,6 +18,6 @@ public class Photo
     
     public int CollectionId { get; set; }
     
-    public Collection Collection { get; set; } = null!;
+    public virtual Collection Collection { get; set; } = null!;
 }
 

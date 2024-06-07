@@ -11,7 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddMapster();
 MapsterConfig.Configure();  
 builder.Services.AddDbContext<ProponoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    options.UseLazyLoadingProxies()
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlServerOptionsAction: sqlOptions =>
         {
             sqlOptions.EnableRetryOnFailure(

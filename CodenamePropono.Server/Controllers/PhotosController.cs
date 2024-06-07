@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CodenamePropono.Server.Data;
+using CodenamePropono.Server.DTOs.Incoming;
+using CodenamePropono.Server.DTOs.Outgoing;
 using CodenamePropono.Server.Models;
+using MapsterMapper;
 
 namespace CodenamePropono.Server.Controllers
 {
@@ -14,23 +17,27 @@ namespace CodenamePropono.Server.Controllers
     [ApiController]
     public class PhotosController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly ProponoDbContext _context;
 
-        public PhotosController(ProponoDbContext context)
+        public PhotosController(IMapper mapper, ProponoDbContext context)
         {
+            _mapper = mapper;
             _context = context;
         }
 
         // GET: api/Photos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Photo>>> GetPhotos()
+        public async Task<ActionResult<IEnumerable<PhotoGetDTO>>> GetPhotos()
         {
-            return await _context.Photos.ToListAsync();
+            var photos = await _context.Photos.ToListAsync();
+            var mappedPhotos = _mapper.Map<List<PhotoGetDTO>>(photos);
+            return mappedPhotos;
         }
 
         // GET: api/Photos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Photo>> GetPhoto(int id)
+        public async Task<ActionResult<PhotoGetDTO>> GetPhoto(int id)
         {
             var photo = await _context.Photos.FindAsync(id);
 
@@ -38,14 +45,17 @@ namespace CodenamePropono.Server.Controllers
             {
                 return NotFound();
             }
-
-            return photo;
+            var mappedPhoto = _mapper.Map<PhotoGetDTO>(photo);
+            
+            return mappedPhoto;
         }
 
         // PUT: api/Photos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPhoto(int id, Photo photo)
+        public async Task<IActionResult> PutPhoto(int id, PhotoCreateDTO photoCreateDTO)
         {
+            //TODO: Create a new photo DTO to update the photo, need to update "UpdateTime" etc
+            var photo = _mapper.Map<Photo>(photoCreateDTO);
             if (id != photo.Id)
             {
                 return BadRequest();
@@ -63,10 +73,7 @@ namespace CodenamePropono.Server.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -74,7 +81,7 @@ namespace CodenamePropono.Server.Controllers
 
         // POST: api/Photos
         [HttpPost("{collectionId}")]
-        public async Task<ActionResult<Photo>> PostPhoto(int collectionId, Photo photo)
+        public async Task<ActionResult<PhotoGetDTO>> PostPhoto(int collectionId, PhotoCreateDTO photoCreateDTO)
         {
             var collection = await _context.Collections.FindAsync(collectionId);
             if (collection == null)
@@ -82,12 +89,16 @@ namespace CodenamePropono.Server.Controllers
                 return NotFound("Collection not found");
             }
 
+            var photo = _mapper.Map<Photo>(photoCreateDTO);
+            collection.UpdateDate = DateTime.Now;
             photo.Collection = collection;
+            photo.UploadDate = DateTime.Now;
 
             _context.Photos.Add(photo);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPhoto", new { id = photo.Id }, photo);
+            var mappedPhoto = _mapper.Map<PhotoGetDTO>(photo);
+            return CreatedAtAction("GetPhoto", new { id = photo.Id }, mappedPhoto);
         }
 
         // DELETE: api/Photos/5

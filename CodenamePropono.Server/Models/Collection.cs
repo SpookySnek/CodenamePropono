@@ -14,7 +14,7 @@ public class Collection
     
     public int UserId { get; set; }
     
-    public User User { get; set; }
+    public virtual User User { get; set; }
     
-    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
+    public virtual ICollection<Photo> Photos { get; set; } = new List<Photo>();
 }

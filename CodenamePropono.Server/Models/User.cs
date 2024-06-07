@@ -16,6 +16,5 @@ public class User
     
     public DateTime LastLogin { get; set; }
 
-    public ICollection<Collection> Collections { get; set; } = new List<Collection>();
-
+    public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
 }

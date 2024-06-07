@@ -27,7 +27,8 @@ public static class MapsterConfig
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
             .Map(dest => dest.UploadDate, src => src.UploadDate.ToString("yyyy-MM-dd"))
-            .Map(dest => dest.PhotoDate, src => src.PhotoDate.Value.ToString("yyyy-MM-dd"))
+            //TODO: Fix formatting of PhotoDate, nullable DateTime
+            .Map(dest => dest.PhotoDate, src => src.PhotoDate.ToString())
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Location, src => src.Location)
             .Map(dest => dest.CollectionId, src => src.CollectionId);
@@ -35,7 +36,8 @@ public static class MapsterConfig
         TypeAdapterConfig<Models.Collection, DTOs.Outgoing.CollectionGetDTO>.NewConfig()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.CreationDate, src => src.CreationDate.ToString("yyyy-MM-dd"))
-            .Map(dest => dest.UpdateDate, src => src.UpdateDate.Value.ToString("yyyy-MM-dd"))
+            //TODO: See above
+            .Map(dest => dest.UpdateDate, src => src.UpdateDate.ToString())
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Location, src => src.Location)
             .Map(dest => dest.UserId, src => src.UserId)

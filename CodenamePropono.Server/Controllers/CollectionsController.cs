@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CodenamePropono.Server.Data;
+using CodenamePropono.Server.DTOs.Incoming;
+using CodenamePropono.Server.DTOs.Outgoing;
 using CodenamePropono.Server.Models;
+using MapsterMapper;
 
 namespace CodenamePropono.Server.Controllers
 {
@@ -14,23 +17,27 @@ namespace CodenamePropono.Server.Controllers
     [ApiController]
     public class CollectionsController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly ProponoDbContext _context;
 
-        public CollectionsController(ProponoDbContext context)
+        public CollectionsController(IMapper mapper, ProponoDbContext context)
         {
+            _mapper = mapper;
             _context = context;
         }
 
         // GET: api/Collections
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Collection>>> GetCollections()
+        public async Task<ActionResult<IEnumerable<CollectionGetDTO>>> GetCollections()
         {
-            return await _context.Collections.ToListAsync();
+            var collections = await _context.Collections.ToListAsync();
+            var mappedCollections = _mapper.Map<List<CollectionGetDTO>>(collections);
+            return mappedCollections;
         }
 
         // GET: api/Collections/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Collection>> GetCollection(int id)
+        public async Task<ActionResult<CollectionGetDTO>> GetCollection(int id)
         {
             var collection = await _context.Collections.FindAsync(id);
 
@@ -38,19 +45,21 @@ namespace CodenamePropono.Server.Controllers
             {
                 return NotFound();
             }
-
-            return collection;
+            var mappedCollection = _mapper.Map<CollectionGetDTO>(collection);
+            return mappedCollection;
         }
 
         // PUT: api/Collections/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCollection(int id, Collection collection)
+        public async Task<IActionResult> PutCollection(int id, CollectionCreateDTO collectionCreateDTO)
         {
+            //TODO: Create a new collection DTO to update the collection, need to update "UpdateTime" etc
+            var collection = _mapper.Map<Collection>(collectionCreateDTO);
             if (id != collection.Id)
             {
                 return BadRequest();
             }
-
+            collection.UpdateDate = DateTime.Now;
             _context.Entry(collection).State = EntityState.Modified;
 
             try
@@ -63,10 +72,7 @@ namespace CodenamePropono.Server.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -74,7 +80,7 @@ namespace CodenamePropono.Server.Controllers
 
         // POST: api/Collections
         [HttpPost("{userId}")]
-        public async Task<ActionResult<Collection>> PostCollection(int userId, Collection collection)
+        public async Task<ActionResult<CollectionGetDTO>> PostCollection(int userId, CollectionCreateDTO collectionCreateDTO)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -82,13 +88,15 @@ namespace CodenamePropono.Server.Controllers
                 return NotFound("User not found");
             }
 
+            var collection = _mapper.Map<Collection>(collectionCreateDTO);
             collection.User = user;
-            collection.Photos = null;
+            collection.CreationDate = DateTime.Now;
 
             _context.Collections.Add(collection);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCollection", new { id = collection.Id }, collection);
+            var mappedCollection = _mapper.Map<CollectionGetDTO>(collection);
+            return CreatedAtAction("GetCollection", new { id = collection.Id }, mappedCollection);
         }
 
         // DELETE: api/Collections/5
