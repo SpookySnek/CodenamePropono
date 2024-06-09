@@ -19,6 +19,7 @@ public static class MapsterConfig
         
         TypeAdapterConfig<DTOs.Incoming.PhotoCreateDTO, Models.Photo>.NewConfig()
             .Map(dest => dest.PhotoUrl, src => src.PhotoUrl)
+            .Map(dest => dest.PhotoDate, src => src.PhotoDate)
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Location, src => src.Location)
             .Map(dest => dest.CollectionId, src => src.CollectionId);

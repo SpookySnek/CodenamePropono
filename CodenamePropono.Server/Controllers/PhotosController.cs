@@ -54,7 +54,7 @@ namespace CodenamePropono.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPhoto(int id, PhotoCreateDTO photoCreateDTO)
         {
-            //TODO: Create a new photo DTO to update the photo, need to update "UpdateTime" etc
+            //TODO: Set UploadDate if not set
             var photo = _mapper.Map<Photo>(photoCreateDTO);
             if (id != photo.Id)
             {

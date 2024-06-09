@@ -6,6 +6,8 @@ public class PhotoCreateDTO
     
     public string? Description { get; set; }
     
+    public string? PhotoDate { get; set; }
+    
     public string? Location { get; set; }
     
     public int CollectionId { get; set; }
