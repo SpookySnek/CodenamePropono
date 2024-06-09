@@ -1,38 +1,34 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import axios from "axios";
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+interface PhotoCardProps {
+    id: number;
+    photoUrl: string;
+    location: string;
 }
 
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+    const [photoCards, setPhotoCards] = useState<PhotoCardProps[]>();
 
     useEffect(() => {
-        populateWeatherData();
+        populatePhotoCards();
     }, []);
 
-    const contents = forecasts === undefined
+    const contents = photoCards === undefined
         ? <p><em>Propono is firing up...</em></p>
         : <table className="table table-striped" aria-labelledby="tabelLabel">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
+                    <th>Url:</th>
+                    <th>Location:</th>
                 </tr>
             </thead>
             <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
+                {photoCards.map(photoCard =>
+                    <tr key={photoCard.id}>
+                        <td>{photoCard.photoUrl}</td>
+                        <td>{photoCard.location}</td>
                     </tr>
                 )}
             </tbody>
@@ -46,10 +42,16 @@ function App() {
         </div>
     );
 
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
+    //TODO: Axios? Change port
+    // async function populatePhotoCards() {
+    //     const response = await fetch('api/Photos');
+    //     const data = await response.json();
+    //     setPhotoCards(data);
+    // }
+    async function populatePhotoCards() {
+        axios.get('api/Photos').then(response => {
+            setPhotoCards(response.data);
+        });
     }
 }
 
